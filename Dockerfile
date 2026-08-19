@@ -43,7 +43,9 @@ RUN mkdir -p /composer && \
 COPY composer.* /composer/
 RUN cd /composer && composer install
 
-RUN curl -sL https://deb.nodesource.com/setup_16.x | bash && \
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x -o /tmp/nodesource_setup.sh && \
+	bash /tmp/nodesource_setup.sh && \
+	rm -f /tmp/nodesource_setup.sh && \
 	apt install -y nodejs && \
 	rm -rf /var/lib/apt/lists/*
 

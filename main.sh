@@ -179,9 +179,10 @@ function maybe_install_node_dep() {
 		NVM_LATEST_VER=$(curl -s "https://api.github.com/repos/nvm-sh/nvm/releases/latest" |
 			grep '"tag_name":' |
 			sed -E 's/.*"([^"]+)".*/\1/')
-		curl -fsSL "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_LATEST_VER/install.sh" -o /tmp/nvm_install.sh
-		bash /tmp/nvm_install.sh
-		rm -f /tmp/nvm_install.sh
+		NVM_INSTALL_SCRIPT=$(mktemp)
+		curl -fsSL "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_LATEST_VER/install.sh" -o "$NVM_INSTALL_SCRIPT"
+		bash "$NVM_INSTALL_SCRIPT"
+		rm -f "$NVM_INSTALL_SCRIPT"
 		export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 		[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
@@ -190,19 +191,17 @@ function maybe_install_node_dep() {
 
 		[[ -z "$NPM_VERSION" ]] && NPM_VERSION="latest" || echo ''
 		export npm_install=$NPM_VERSION
-		curl -fsSL https://www.npmjs.com/install.sh -o /tmp/npm_install.sh
-		bash /tmp/npm_install.sh
-		rm -f /tmp/npm_install.sh
+		NPM_INSTALL_SCRIPT=$(mktemp)
+		curl -fsSL https://www.npmjs.com/install.sh -o "$NPM_INSTALL_SCRIPT"
+		bash "$NPM_INSTALL_SCRIPT"
+		rm -f "$NPM_INSTALL_SCRIPT"
 	fi
 }
 
 function maybe_run_node_build() {
 
 	[[ -n "$NODE_BUILD_DIRECTORY" ]] && cd "$NODE_BUILD_DIRECTORY"
-	if [[ -n "$NODE_BUILD_COMMAND" ]]; then
-		IFS=' ' read -ra _node_cmd_parts <<< "$NODE_BUILD_COMMAND"
-		"${_node_cmd_parts[@]}"
-	fi
+	[[ -n "$NODE_BUILD_COMMAND" ]] && eval "$NODE_BUILD_COMMAND"
 	if [[ -n "$NODE_BUILD_SCRIPT" ]]; then
 		cd "$GITHUB_WORKSPACE"
 		chmod +x "$NODE_BUILD_SCRIPT"
@@ -236,10 +235,7 @@ function maybe_install_php_dep() {
 function maybe_run_php_build() {
 
 	[[ -n "$PHP_BUILD_DIRECTORY" ]] && cd "$PHP_BUILD_DIRECTORY"
-	if [[ -n "$PHP_BUILD_COMMAND" ]]; then
-		IFS=' ' read -ra _php_cmd_parts <<< "$PHP_BUILD_COMMAND"
-		"${_php_cmd_parts[@]}"
-	fi
+	[[ -n "$PHP_BUILD_COMMAND" ]] && eval "$PHP_BUILD_COMMAND"
 
 	if [[ -n "$PHP_BUILD_SCRIPT" ]]; then
 		chmod +x "$PHP_BUILD_SCRIPT"

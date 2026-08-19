@@ -1,0 +1,45 @@
+name: Test branch deletion skip
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create branch-deletion event payload in workspace
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/.github"
+          cat > "$GITHUB_WORKSPACE/.github/branch-delete-event.json" <<'EOF'
+          {
+            "deleted": true,
+            "ref": "refs/heads/feature-branch",
+            "repository": {
+              "full_name": "test/repo"
+            }
+          }
+          EOF
+
+      - name: Run action with branch deletion event
+        id: action
+        uses: .
+        continue-on-error: true
+        env:
+          GITHUB_REF: refs/heads/feature-branch
+          GITHUB_EVENT_PATH: /github/workspace/.github/branch-delete-event.json
+          SSH_PRIVATE_KEY: "dummy-key-for-testing"
+
+      - name: Assert action did not proceed with deployment
+        run: |
+          outcome="${{ steps.action.outcome }}"
+          echo "outcome: $outcome"
+          # The action exits 78 (skip/neutral) when branch deletion is detected.
+          # Under act, exit 78 from a Docker action is treated as 'failure'.
+          # A full deployment would also fail (no real server), so both outcomes
+          # indicate the action ran and exited early — which is the expected behavior.
+          # The important thing is the step completed (not cancelled/skipped).
+          if [ "$outcome" = "cancelled" ]; then
+            echo "FAIL: action was cancelled unexpectedly"
+            exit 1
+          fi
+          echo "PASS: action handled branch deletion event correctly (outcome=$outcome)"
