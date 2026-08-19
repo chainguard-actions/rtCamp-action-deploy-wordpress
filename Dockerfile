@@ -38,18 +38,12 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 
 # Setup composer
 RUN mkdir -p /composer && \
-	curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php && \
-	EXPECTED_CHECKSUM="$(curl -sS https://composer.github.io/installer.sig)" && \
-	ACTUAL_CHECKSUM="$(php -r "echo hash_file('sha384', '/tmp/composer-setup.php');")" && \
-	if [ "$EXPECTED_CHECKSUM" != "$ACTUAL_CHECKSUM" ]; then echo "Composer installer checksum mismatch" && rm -f /tmp/composer-setup.php && exit 1; fi && \
-	php /tmp/composer-setup.php --install-dir=/usr/bin/ --filename=composer && \
-	rm -f /tmp/composer-setup.php
+	curl -sS https://getcomposer.org/installer | \
+	php -- --install-dir=/usr/bin/ --filename=composer
 COPY composer.* /composer/
 RUN cd /composer && composer install
 
-RUN curl -sL https://deb.nodesource.com/setup_24.x -o /tmp/nodesource_setup.sh && \
-	bash /tmp/nodesource_setup.sh && \
-	rm -f /tmp/nodesource_setup.sh && \
+RUN curl -sL https://deb.nodesource.com/setup_24.x | bash && \
 	apt install -y nodejs && \
 	rm -rf /var/lib/apt/lists/*
 

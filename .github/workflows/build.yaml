@@ -1,0 +1,38 @@
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - '*'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4.1.0
+      - name: Login to GitHub Container Registry
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
+        run: echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+      - name: Set Lowercase Image Tag
+        id: prep
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+        run: |
+          IMAGE_TAG="ghcr.io/$GITHUB_REPOSITORY:$GITHUB_REF_NAME"
+          IMAGE_TAG_LOWER=$(echo "$IMAGE_TAG" | tr '[:upper:]' '[:lower:]')
+          safe=$(printf '%s' "$IMAGE_TAG_LOWER" | tr -d '\n\r')
+          echo "IMAGE_TAG_LOWER=$safe" >> "$GITHUB_ENV"
+      - name: Build and Push Multi-Arch Docker Image
+        run: |
+          docker buildx build --platform linux/amd64,linux/arm64 -t "$IMAGE_TAG_LOWER" --push .
