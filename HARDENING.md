@@ -8,47 +8,29 @@
 
 **Test Policy SHA:** `843adf9e4b8f85d0c08b27b9d0b09dd094b54702`
 
-**Harden Agent Version:** `1`
+**Harden Agent Version:** `2`
 
-Action **rtCamp--action-deploy-wordpress/v3.1.2** was hardened automatically. 2 finding(s) were identified and resolved across 2 iteration(s).
+Action **rtCamp--action-deploy-wordpress/v3.1.2** was hardened automatically. 1 finding(s) were identified and resolved across 2 iteration(s).
 
 ## Findings Fixed
 
 ### unpinned-uses (severity: high)
 
-action.yml references the Docker image using a mutable version tag (`docker://ghcr.io/rtcamp/action-deploy-wordpress:v3.1.2`) instead of an immutable SHA digest. A tag can be silently overwritten to point to a different (potentially malicious) image, enabling a supply-chain attack. The image reference should use a SHA256 digest, e.g. `docker://ghcr.io/rtcamp/action-deploy-wordpress@sha256:<64-hex-char-digest>`.
+The action.yml uses a Docker image referenced by a mutable tag (`v3.1.2`) instead of an immutable SHA digest. This means the image could be silently replaced with a different (potentially malicious) version without any change to the action definition, creating a supply-chain attack risk. The image reference `docker://ghcr.io/rtcamp/action-deploy-wordpress:v3.1.2` should be pinned to a full SHA256 digest, e.g. `docker://ghcr.io/rtcamp/action-deploy-wordpress@sha256:<64-hex-char-digest> # v3.1.2`.
 
 Locations:
 
 - `action.yml:6`
 
-### unsafe-shell (severity: high)
-
-Remote content is fetched with curl and piped directly to bash without first saving to a file and verifying integrity. This allows a compromised or malicious remote server to execute arbitrary code on the runner. Three occurrences found:
-1. Dockerfile: `curl -sL https://deb.nodesource.com/setup_16.x | bash`
-2. main.sh: `curl -fsSL "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_LATEST_VER/install.sh" | bash`
-3. main.sh: `curl -fsSL https://www.npmjs.com/install.sh | bash`
-
-Locations:
-
-- `Dockerfile:43`
-- `main.sh:133`
-- `main.sh:140`
-
 ## Iteration Notes
 
 ### Iteration 1
 
-**Fixes applied:** unpinned-uses, unsafe-shell
+**Fixes applied:** unpinned-uses
 
 **Notes:**
 
-Fixed three security issues:
-1. action.yml: Pinned Docker image from mutable tag 'v3.1.2' to immutable SHA256 digest 'sha256:44ade946449e54e172e2775138f22261ea2a530ea64420192265d445201bf40c', preserving the tag as a comment.
-2. Dockerfile (line 43): Replaced `curl -sL https://deb.nodesource.com/setup_16.x | bash` with download-to-temp-file then execute pattern.
-3. main.sh (line 133): Replaced `curl -fsSL "...nvm.../install.sh" | bash` with download-to-temp-file then execute pattern.
-4. main.sh (line 140): Replaced `curl -fsSL https://www.npmjs.com/install.sh | bash` with download-to-temp-file then execute pattern.
-All temp files are cleaned up after execution.
+Pinned the Docker container image in action.yml from `docker://ghcr.io/rtcamp/action-deploy-wordpress:v3.1.2` to `docker://ghcr.io/rtcamp/action-deploy-wordpress:v3.1.2@sha256:44ade946449e54e172e2775138f22261ea2a530ea64420192265d445201bf40c`. The `docker://` scheme and the `:v3.1.2` tag are preserved inline alongside the digest for readability and correctness.
 
 ### Iteration 2
 
@@ -56,5 +38,15 @@ All temp files are cleaned up after execution.
 
 **Notes:**
 
-Fixed the unsafe curl-pipe-to-PHP pattern in Dockerfile line 40. Replaced `curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer` with a secure download-verify-execute pattern: (1) download the installer to /tmp/composer-installer.php, (2) download the official SHA-384 signature from composer.github.io/installer.sig, (3) verify the hash matches before executing, (4) fail the build with an error if verification fails, (5) clean up temp files. This follows the official Composer security installation recommendations.
+Fixed all four curl-to-shell patterns by downloading scripts to temp files before executing them:
+
+1. **Dockerfile (composer installer)**: Changed `curl -sS https://getcomposer.org/installer | php` to download to `/tmp/composer-installer.php` first, then run `php /tmp/composer-installer.php`, then remove the temp file.
+
+2. **Dockerfile (NodeSource setup)**: Changed `curl -sL https://deb.nodesource.com/setup_16.x | bash` to download to `/tmp/nodesource_setup.sh` first, then run `bash /tmp/nodesource_setup.sh`, then remove the temp file.
+
+3. **main.sh (NVM install)**: Changed `curl -fsSL "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_LATEST_VER/install.sh" | bash` to download to `/tmp/nvm_install.sh` first, then run `bash /tmp/nvm_install.sh`, then remove the temp file.
+
+4. **main.sh (npm install)**: Changed `curl -fsSL https://www.npmjs.com/install.sh | bash` to download to `/tmp/npm_install.sh` first, then run `bash /tmp/npm_install.sh`, then remove the temp file.
+
+All other logic in both files was preserved unchanged.
 

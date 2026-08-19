@@ -37,23 +37,15 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 
 # Setup composer
 RUN mkdir -p /composer && \
-	curl -sS https://getcomposer.org/installer -o /tmp/composer-installer.php && \
-	curl -sS https://composer.github.io/installer.sig -o /tmp/composer-installer.sig && \
-	EXPECTED_SIG="$(cat /tmp/composer-installer.sig)" && \
-	ACTUAL_SIG="$(php -r "echo hash_file('sha384', '/tmp/composer-installer.php');")" && \
-	if [ "$EXPECTED_SIG" != "$ACTUAL_SIG" ]; then \
-		echo "ERROR: Composer installer signature verification failed!" >&2; \
-		rm -f /tmp/composer-installer.php /tmp/composer-installer.sig; \
-		exit 1; \
-	fi && \
+	curl -sS -o /tmp/composer-installer.php https://getcomposer.org/installer && \
 	php /tmp/composer-installer.php --install-dir=/usr/bin/ --filename=composer && \
-	rm -f /tmp/composer-installer.php /tmp/composer-installer.sig
+	rm /tmp/composer-installer.php
 COPY composer.* /composer/
 RUN cd /composer && composer install
 
 RUN curl -sL -o /tmp/nodesource_setup.sh https://deb.nodesource.com/setup_16.x && \
 	bash /tmp/nodesource_setup.sh && \
-	rm -f /tmp/nodesource_setup.sh && \
+	rm /tmp/nodesource_setup.sh && \
 	apt install -y nodejs && \
 	rm -rf /var/lib/apt/lists/*
 

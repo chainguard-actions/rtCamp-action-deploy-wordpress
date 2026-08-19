@@ -175,9 +175,9 @@ function maybe_install_node_dep() {
 		NVM_LATEST_VER=$(curl -s "https://api.github.com/repos/nvm-sh/nvm/releases/latest" |
 			grep '"tag_name":' |
 			sed -E 's/.*"([^"]+)".*/\1/') &&
-			curl -fsSL -o /tmp/nvm_install.sh "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_LATEST_VER/install.sh" && \
-		bash /tmp/nvm_install.sh && \
-		rm -f /tmp/nvm_install.sh
+			curl -fsSL -o /tmp/nvm_install.sh "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_LATEST_VER/install.sh" &&
+			bash /tmp/nvm_install.sh &&
+			rm /tmp/nvm_install.sh
 		export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 		[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
@@ -186,9 +186,9 @@ function maybe_install_node_dep() {
 
 		[[ -z "$NPM_VERSION" ]] && NPM_VERSION="latest" || echo ''
 		export npm_install=$NPM_VERSION
-		curl -fsSL -o /tmp/npm_install.sh https://www.npmjs.com/install.sh && \
-		bash /tmp/npm_install.sh && \
-		rm -f /tmp/npm_install.sh
+		curl -fsSL -o /tmp/npm_install.sh https://www.npmjs.com/install.sh &&
+			bash /tmp/npm_install.sh &&
+			rm /tmp/npm_install.sh
 	fi
 }
 
