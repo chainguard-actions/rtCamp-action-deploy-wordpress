@@ -13,6 +13,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 | v3.3.0 | [`v3.3.0`](https://github.com/chainguard-actions/rtCamp-action-deploy-wordpress/tree/v3.3.0) | [`1807586`](https://github.com/rtCamp/action-deploy-wordpress/commit/1807586dc4e477c101289ea0bd3c6071d99eea55) |
 | v3.4.0 | [`v3.4.0`](https://github.com/chainguard-actions/rtCamp-action-deploy-wordpress/tree/v3.4.0) | [`1513bd4`](https://github.com/rtCamp/action-deploy-wordpress/commit/1513bd4c14e87959cfb2a95cb3707dfc789663c6) |
 | v3.4.1 | [`v3.4.1`](https://github.com/chainguard-actions/rtCamp-action-deploy-wordpress/tree/v3.4.1) | [`29c6a46`](https://github.com/rtCamp/action-deploy-wordpress/commit/29c6a46d057381ced2dd4de3af8787a763982fe4) |
+| v3.4.2 | [`v3.4.2`](https://github.com/chainguard-actions/rtCamp-action-deploy-wordpress/tree/v3.4.2) | [`a586389`](https://github.com/rtCamp/action-deploy-wordpress/commit/a586389295b2c24952f1803423129cb9656f203e) |
 
 ## Privacy
 
