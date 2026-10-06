@@ -1,0 +1,9 @@
+name: 'Deploy WordPress'
+description: 'Deploy WordPress code to a server'
+author: 'rtCamp'
+runs:
+  using: 'docker'
+  image: 'docker://ghcr.io/rtcamp/action-deploy-wordpress:v3.4.2@sha256:0d478f9a22c004f5228cbf0b05e7b028f49aac9670699808d74e6e726c659d28'
+branding:
+  icon: 'upload-cloud'
+  color: 'yellow'
