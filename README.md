@@ -6,14 +6,14 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 
 ## Versions
 
-| Version | Tag | Upstream commit |
-|---------|-----|-----------------|
-| v3.1.2 | [`v3.1.2`](https://github.com/chainguard-actions/rtCamp-action-deploy-wordpress/tree/v3.1.2) | [`ae4dc4b`](https://github.com/rtCamp/action-deploy-wordpress/commit/ae4dc4bf5a08a13f60d6972e72602238e9208798) |
-| v3.2.0 | [`v3.2.0`](https://github.com/chainguard-actions/rtCamp-action-deploy-wordpress/tree/v3.2.0) | [`04f6302`](https://github.com/rtCamp/action-deploy-wordpress/commit/04f6302b4bbf64b26b3605c0c3800c701bcae20c) |
-| v3.3.0 | [`v3.3.0`](https://github.com/chainguard-actions/rtCamp-action-deploy-wordpress/tree/v3.3.0) | [`1807586`](https://github.com/rtCamp/action-deploy-wordpress/commit/1807586dc4e477c101289ea0bd3c6071d99eea55) |
-| v3.4.0 | [`v3.4.0`](https://github.com/chainguard-actions/rtCamp-action-deploy-wordpress/tree/v3.4.0) | [`1513bd4`](https://github.com/rtCamp/action-deploy-wordpress/commit/1513bd4c14e87959cfb2a95cb3707dfc789663c6) |
-| v3.4.1 | [`v3.4.1`](https://github.com/chainguard-actions/rtCamp-action-deploy-wordpress/tree/v3.4.1) | [`29c6a46`](https://github.com/rtCamp/action-deploy-wordpress/commit/29c6a46d057381ced2dd4de3af8787a763982fe4) |
-| v3.4.2 | [`v3.4.2`](https://github.com/chainguard-actions/rtCamp-action-deploy-wordpress/tree/v3.4.2) | [`a586389`](https://github.com/rtCamp/action-deploy-wordpress/commit/a586389295b2c24952f1803423129cb9656f203e) |
+| Version | Tag | Upstream commit | Hardening report |
+|---------|-----|-----------------|------------------|
+| v3.1.2 | [`v3.1.2`](https://github.com/chainguard-actions/rtCamp-action-deploy-wordpress/tree/v3.1.2) | [`ae4dc4b`](https://github.com/rtCamp/action-deploy-wordpress/commit/ae4dc4bf5a08a13f60d6972e72602238e9208798) | [`HARDENING.md`](https://github.com/chainguard-actions/rtCamp-action-deploy-wordpress/blob/v3.1.2/HARDENING.md) |
+| v3.2.0 | [`v3.2.0`](https://github.com/chainguard-actions/rtCamp-action-deploy-wordpress/tree/v3.2.0) | [`04f6302`](https://github.com/rtCamp/action-deploy-wordpress/commit/04f6302b4bbf64b26b3605c0c3800c701bcae20c) | [`HARDENING.md`](https://github.com/chainguard-actions/rtCamp-action-deploy-wordpress/blob/v3.2.0/HARDENING.md) |
+| v3.3.0 | [`v3.3.0`](https://github.com/chainguard-actions/rtCamp-action-deploy-wordpress/tree/v3.3.0) | [`1807586`](https://github.com/rtCamp/action-deploy-wordpress/commit/1807586dc4e477c101289ea0bd3c6071d99eea55) | [`HARDENING.md`](https://github.com/chainguard-actions/rtCamp-action-deploy-wordpress/blob/v3.3.0/HARDENING.md) |
+| v3.4.0 | [`v3.4.0`](https://github.com/chainguard-actions/rtCamp-action-deploy-wordpress/tree/v3.4.0) | [`1513bd4`](https://github.com/rtCamp/action-deploy-wordpress/commit/1513bd4c14e87959cfb2a95cb3707dfc789663c6) | [`HARDENING.md`](https://github.com/chainguard-actions/rtCamp-action-deploy-wordpress/blob/v3.4.0/HARDENING.md) |
+| v3.4.1 | [`v3.4.1`](https://github.com/chainguard-actions/rtCamp-action-deploy-wordpress/tree/v3.4.1) | [`29c6a46`](https://github.com/rtCamp/action-deploy-wordpress/commit/29c6a46d057381ced2dd4de3af8787a763982fe4) | [`HARDENING.md`](https://github.com/chainguard-actions/rtCamp-action-deploy-wordpress/blob/v3.4.1/HARDENING.md) |
+| v3.4.2 | [`v3.4.2`](https://github.com/chainguard-actions/rtCamp-action-deploy-wordpress/tree/v3.4.2) | [`a586389`](https://github.com/rtCamp/action-deploy-wordpress/commit/a586389295b2c24952f1803423129cb9656f203e) | [`HARDENING.md`](https://github.com/chainguard-actions/rtCamp-action-deploy-wordpress/blob/v3.4.2/HARDENING.md) |
 
 ## Privacy
 
