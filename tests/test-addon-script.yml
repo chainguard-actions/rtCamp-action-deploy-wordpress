@@ -1,0 +1,52 @@
+name: Test custom addon.sh override is executed
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Create custom addon.sh
+        run: |
+          rm -f "$GITHUB_WORKSPACE/addon-marker.txt"
+          mkdir -p "$GITHUB_WORKSPACE/.github/deploy"
+          cat > "$GITHUB_WORKSPACE/.github/deploy/addon.sh" <<'EOF'
+          #!/usr/bin/env bash
+          echo "addon executed"
+          {
+            echo "ADDON_RAN=yes"
+            echo "BRANCH=${GITHUB_BRANCH}"
+            echo "CUSTOM_ENV=${MY_CUSTOM_VAR}"
+          } > "$GITHUB_WORKSPACE/addon-marker.txt"
+          EOF
+          chmod +x "$GITHUB_WORKSPACE/.github/deploy/addon.sh"
+      - id: action
+        uses: .
+        env:
+          SSH_PRIVATE_KEY: dummy-key-not-used
+          MY_CUSTOM_VAR: hello-addon
+      - name: Assert addon ran
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" != "success" ]; then
+            echo "FAIL: expected success"
+            exit 1
+          fi
+          if [ ! -f "$GITHUB_WORKSPACE/addon-marker.txt" ]; then
+            echo "FAIL: addon marker not found"
+            exit 1
+          fi
+          cat "$GITHUB_WORKSPACE/addon-marker.txt"
+          grep -q '^ADDON_RAN=yes$' "$GITHUB_WORKSPACE/addon-marker.txt" || { echo "FAIL: ADDON_RAN missing"; exit 1; }
+          grep -q '^CUSTOM_ENV=hello-addon$' "$GITHUB_WORKSPACE/addon-marker.txt" || { echo "FAIL: custom env not passed"; exit 1; }
+          if grep -q '^BRANCH=$' "$GITHUB_WORKSPACE/addon-marker.txt"; then
+            echo "FAIL: GITHUB_BRANCH empty"
+            exit 1
+          fi
+          echo "PASS"
+      - name: Cleanup
+        if: always()
+        run: |
+          rm -rf "$GITHUB_WORKSPACE/.github/deploy" "$GITHUB_WORKSPACE/addon-marker.txt" || true
